@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Oii Login</title>
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+
+background:black;
+color:white;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+flex-direction:column;
+
+font-family:sans-serif;
+
+}
+
+input{
+
+width:250px;
+
+padding:15px;
+
+margin:10px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+}
+
+button{
+
+padding:15px 40px;
+
+font-size:18px;
+
+border:none;
+
+border-radius:10px;
+
+background:#ff0080;
+
+color:white;
+
+margin-top:10px;
+
+}
+
+#title{
+
+font-size:40px;
+
+margin-bottom:30px;
+
+color:#ff0080;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1 id="title">
+Oii Reels 🔥
+</h1>
+
+<input
+type="email"
+id="email"
+placeholder="Enter Email">
+
+<input
+type="password"
+id="password"
+placeholder="Enter Password">
+
+<button onclick="signup()">
+Signup
+</button>
+
+<button onclick="login()">
+Login
+</button>
+
+<script type="module">
+
+import {
+initializeApp
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBSPst1YvKZHuAH082jOr8iOFHtp5yqXms",
+
+authDomain:
+"oii-f5297.firebaseapp.com",
+
+databaseURL:
+"https://oii-f5297-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"oii-f5297",
+
+storageBucket:
+"oii-f5297.firebasestorage.app",
+
+messagingSenderId:
+"390917741842",
+
+appId:
+"1:390917741842:web:a557fd4165660b652ce7cb"
+
+};
+
+
+// INIT
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+
+// INPUTS
+
+const emailInput =
+document.getElementById(
+"email"
+);
+
+const passwordInput =
+document.getElementById(
+"password"
+);
+
+
+// SIGNUP
+
+window.signup = ()=>{
+
+const email =
+emailInput.value;
+
+const password =
+passwordInput.value;
+
+createUserWithEmailAndPassword(
+
+auth,
+email,
+password
+
+)
+
+.then(()=>{
+
+alert(
+"Signup Success 🔥"
+);
+
+})
+
+.catch(err=>{
+
+alert(
+err.message
+);
+
+});
+
+};
+
+
+// LOGIN
+
+window.login = ()=>{
+
+const email =
+emailInput.value;
+
+const password =
+passwordInput.value;
+
+signInWithEmailAndPassword(
+
+auth,
+email,
+password
+
+)
+
+.then(()=>{
+
+localStorage.setItem(
+"user",
+email
+);
+
+
+// ADMIN CHECK
+
+if(
+email === "admin@gmail.com"
+){
+
+localStorage.setItem(
+"role",
+"admin"
+);
+
+}else{
+
+localStorage.setItem(
+"role",
+"user"
+);
+
+}
+
+
+alert(
+"Login Success 🔥"
+);
+
+window.location.href =
+"/reels";
+
+})
+
+.catch(err=>{
+
+alert(
+err.message
+);
+
+});
+
+};
+
+</script>
+
+</body>
+
+</html>

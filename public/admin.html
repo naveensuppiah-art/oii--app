@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel</title>
+
+<style>
+
+body{
+
+margin:0;
+background:black;
+font-family:sans-serif;
+color:white;
+
+}
+
+#top{
+
+padding:20px;
+
+font-size:28px;
+
+font-weight:bold;
+
+text-align:center;
+
+background:#111;
+
+}
+
+#stats{
+
+display:flex;
+
+justify-content:space-around;
+
+padding:20px;
+
+}
+
+.card{
+
+background:#111;
+
+padding:20px;
+
+border-radius:20px;
+
+width:40%;
+
+text-align:center;
+
+}
+
+.num{
+
+font-size:28px;
+
+font-weight:bold;
+
+margin-top:10px;
+
+}
+
+#title{
+
+padding:20px;
+
+font-size:22px;
+
+font-weight:bold;
+
+}
+
+#reels{
+
+padding:15px;
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:10px;
+
+}
+
+.reel{
+
+background:#111;
+
+padding:10px;
+
+border-radius:20px;
+
+}
+
+.reel video{
+
+width:100%;
+
+border-radius:15px;
+
+}
+
+.delete{
+
+margin-top:10px;
+
+width:100%;
+
+height:45px;
+
+border:none;
+
+border-radius:15px;
+
+background:red;
+
+color:white;
+
+font-size:16px;
+
+font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<input
+id="searchUser"
+placeholder="Search user..."
+style="
+width:90%;
+height:50px;
+margin:20px;
+border:none;
+border-radius:15px;
+padding:0 15px;
+font-size:16px;
+">
+
+<div id="top">
+🛠️ Admin Panel
+</div>
+
+<div id="stats">
+
+<div class="card">
+
+Total Reels
+
+<div class="num"
+id="reelCount">
+0
+</div>
+
+</div>
+
+<div class="card">
+
+Users
+
+<div class="num">
+1
+</div>
+
+</div>
+
+</div>
+
+<div id="title">
+Manage Reels
+</div>
+
+<div id="reels"></div>
+
+<script>
+const searchUser =
+document.getElementById(
+"searchUser"
+);
+
+const reelsBox =
+document.getElementById(
+"reels"
+);
+
+const reelCount =
+document.getElementById(
+"reelCount"
+);
+
+
+// LOAD REELS
+
+async function loadReels(){
+
+const res =
+await fetch("/api/reels");
+
+const reels =
+await res.json();
+
+reelCount.innerHTML =
+reels.length;
+
+reels.forEach((item,index)=>{
+const username =
+item.user || "unknown";
+
+const file =
+item.video || item;
+
+const reel =
+document.createElement(
+"div"
+);
+
+reel.className =
+"reel";
+
+const video =
+document.createElement(
+"video"
+);
+
+video.src =
+"/uploads/" + file;
+
+video.controls =
+true;
+
+const del =
+document.createElement(
+"button"
+);
+
+del.className =
+"delete";
+
+del.innerHTML =
+"Delete Reel";
+
+
+// DELETE UI
+
+del.onclick = ()=>{
+
+reel.remove();
+
+alert(
+"Reel Deleted"
+);
+
+};
+
+
+reel.appendChild(
+video
+);
+const user =
+document.createElement(
+"div"
+);
+
+user.innerHTML =
+"👤 " + username;
+
+user.style.padding =
+"10px 0";
+
+reel.appendChild(user);
+
+reel.appendChild(
+del
+);
+
+reelsBox.appendChild(
+reel
+);
+
+});
+
+}
+searchUser.oninput = ()=>{
+
+const value =
+
+searchUser.value
+.toLowerCase();
+
+document
+.querySelectorAll(".reel")
+.forEach(reel=>{
+
+const text =
+reel.innerText
+.toLowerCase();
+
+if(text.includes(value)){
+
+reel.style.display =
+"block";
+
+}else{
+
+reel.style.display =
+"none";
+
+}
+
+});
+
+};
+
+loadReels();
+
+</script>
+
+</body>
+
+</html>

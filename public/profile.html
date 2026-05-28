@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Profile</title>
+
+<style>
+
+body{
+
+margin:0;
+background:black;
+font-family:sans-serif;
+color:white;
+
+}
+
+#top{
+
+text-align:center;
+
+padding:30px 20px;
+
+}
+
+#dp{
+
+width:110px;
+height:110px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:4px solid hotpink;
+
+}
+
+#name{
+
+font-size:24px;
+
+font-weight:bold;
+
+margin-top:15px;
+
+}
+
+#bio{
+
+color:#aaa;
+
+margin-top:8px;
+
+}
+
+#stats{
+
+display:flex;
+
+justify-content:center;
+
+gap:30px;
+
+margin-top:20px;
+
+}
+
+.stat{
+
+text-align:center;
+
+}
+
+.num{
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+.label{
+
+color:#aaa;
+
+font-size:14px;
+
+}
+
+#title{
+
+padding:20px;
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+#grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,1fr);
+
+gap:5px;
+
+padding:5px;
+
+}
+
+#grid video{
+
+width:100%;
+
+height:200px;
+
+object-fit:cover;
+
+border-radius:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="top">
+
+<img id="dp">
+<button id="editDp">
+✏️
+</button>
+
+<input
+type="file"
+id="changeDp"
+accept="image/*"
+style="display:none;">
+
+<div id="name">
+Oii User
+</div>
+
+<div id="bio">
+Memories Always Welcome ❤️
+</div>
+
+<div id="stats">
+
+<div class="stat">
+
+<div class="num"
+id="reelsCount">
+0
+</div>
+
+<div class="label">
+Reels
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="num">
+120
+</div>
+
+<div class="label">
+Followers
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="num">
+87
+</div>
+
+<div class="label">
+Following
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="title">
+Your Reels
+</div>
+
+<div id="grid"></div>
+
+
+<script>
+
+const dp =
+document.getElementById(
+"dp"
+);
+
+const name =
+document.getElementById(
+"name"
+);
+
+const grid =
+document.getElementById(
+"grid"
+);
+
+const reelsCount =
+document.getElementById(
+"reelsCount"
+);
+const editDp =
+document.getElementById(
+"editDp"
+);
+
+editDp.onclick = ()=>{
+
+document.getElementById(
+"changeDp"
+).click();
+
+};
+
+// LOAD USER DATA
+
+dp.src =
+
+localStorage.getItem(
+"dp"
+)
+
+||
+
+"https://i.imgur.com/HeIi0wU.png";
+
+
+name.innerHTML =
+
+localStorage.getItem(
+"username"
+)
+
+||
+
+"Oii User";
+
+
+// CHANGE DP
+
+const changeDp =
+
+document.getElementById(
+"changeDp"
+);
+
+changeDp.onchange = (e)=>{
+
+const file =
+e.target.files[0];
+
+const reader =
+new FileReader();
+
+reader.onload = ()=>{
+
+localStorage.setItem(
+"dp",
+reader.result
+);
+
+dp.src =
+reader.result;
+
+};
+
+reader.readAsDataURL(
+file
+);
+
+};
+
+
+// LOAD REELS
+
+async function loadReels(){
+
+const res =
+await fetch("/api/reels");
+
+const reels =
+await res.json();
+
+reelsCount.innerHTML =
+reels.length;
+
+reels.forEach(file=>{
+
+const video =
+document.createElement(
+"video"
+);
+
+video.src =
+
+"/uploads/" +
+
+(file.video || file);
+
+video.controls =
+true;
+
+grid.appendChild(
+video
+);
+
+});
+
+}
+
+loadReels();
+
+</script>
+
+</body>
+
+</html>
