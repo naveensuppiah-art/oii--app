@@ -12,11 +12,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "oii",
-  password: "5432",
-  port: 5432,
+ connectionString: process.env.DATABASE_URL,
+ ssl: {
+   rejectUnauthorized: false
+ }
 });
 
 pool.query("SELECT NOW()", (err) => {
