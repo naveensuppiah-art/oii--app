@@ -171,8 +171,9 @@ id="reelCount">
 
 Users
 
-<div class="num">
-1
+<div class="num"
+id="userCount">
+0
 </div>
 
 </div>
@@ -201,98 +202,137 @@ document.getElementById(
 "reelCount"
 );
 
+const userCount =
+document.getElementById(
+"userCount"
+);
 
-// LOAD REELS
-
-async function loadReels(){
+async function loadUsers(){
 
 const res =
-await fetch("/api/reels");
+await fetch(
+"/api/users/count"
+);
 
-const reels =
+const data =
 await res.json();
 
-reelCount.innerHTML =
-reels.length;
+userCount.innerHTML =
+data.count;
 
-reels.forEach((item,index)=>{
-const username =
-item.user || "unknown";
+}
+async function loadReels(){
 
-const file =
-item.video || item;
+  reelsBox.innerHTML = "";
 
-const reel =
-document.createElement(
-"div"
-);
+  const res =
+  await fetch("/api/reels");
 
-reel.className =
-"reel";
+  const reels =
+  await res.json();
 
-const video =
-document.createElement(
-"video"
-);
+  reelCount.innerHTML =
+  reels.length;
 
-video.src =
-"/uploads/" + file;
+  reels.forEach((item)=>{
 
-video.controls =
-true;
+    const username =
+    item.username || "Unknown";
+    const file =(item.video_url || "").split("/").pop();
 
-const del =
-document.createElement(
-"button"
-);
+    const reel =document.createElement("div");
 
-del.className =
-"delete";
+    reel.className =
+    "reel";
 
-del.innerHTML =
-"Delete Reel";
+    const video =
+    document.createElement("video");
 
+    video.src =
+    item.video_url;
 
-// DELETE UI
+    video.controls =
+    true;
 
-del.onclick = ()=>{
+    const user =
+    document.createElement("div");
 
-reel.remove();
+    user.innerHTML =
+    "👤 " + username;
 
-alert(
-"Reel Deleted"
-);
+    user.style.padding =
+    "10px 0";
+
+    const del =
+    document.createElement("button");
+
+    del.className =
+    "delete";
+
+    del.innerHTML =
+    "Delete Reel";
+
+   del.onclick = async () => {
+
+  if(!confirm("Delete Reel?"))
+  return;
+
+  try {
+
+    const res = await fetch(
+      "/api/reels/" + file,
+      {
+        method: "DELETE"
+      }
+    );
+
+    const data =
+    await res.json();
+
+    if(data.success){
+
+      reel.remove();
+
+      reelCount.innerHTML =
+      Number(reelCount.innerHTML) - 1;
+
+      alert("Deleted");
+
+    } else {
+
+      alert("Delete Failed");
+
+    }
+
+  } catch(err){
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
 
 };
 
+    reel.appendChild(
+      video
+    );
 
-reel.appendChild(
-video
-);
-const user =
-document.createElement(
-"div"
-);
+    reel.appendChild(
+      user
+    );
 
-user.innerHTML =
-"👤 " + username;
+    reel.appendChild(
+      del
+    );
 
-user.style.padding =
-"10px 0";
+    reelsBox.appendChild(
+      reel
+    );
 
-reel.appendChild(user);
+  });
 
-reel.appendChild(
-del
-);
-
-reelsBox.appendChild(
-reel
-);
-
-});
-
-}
+}    
 searchUser.oninput = ()=>{
 
 const value =
@@ -321,9 +361,9 @@ reel.style.display =
 }
 
 });
-
+ 
 };
-
+loadUsers();
 loadReels();
 
 </script>

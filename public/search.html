@@ -126,7 +126,7 @@ document.getElementById(
 );
 
 
-// LOAD REELS
+// 
 
 async function load(){
 
@@ -135,6 +135,12 @@ await fetch("/api/reels");
 
 const reels =
 await res.json();
+
+const usersRes =
+await fetch("/api/users");
+
+const users =
+await usersRes.json();
 
 
 // TRENDING SORT
@@ -176,6 +182,37 @@ const text =
 
 (item.video || item)
 .toLowerCase();
+const userResults =
+users.filter(u =>
+u.username.toLowerCase()
+.includes(value)
+);
+
+if(userResults.length){
+
+results.innerHTML = "";
+
+userResults.forEach(u => {
+
+const card =
+document.createElement("div");
+
+card.className =
+"card";
+
+card.innerHTML = `
+<div class="name">
+👤 ${u.username}
+</div>
+`;
+
+results.appendChild(card);
+
+});
+
+return;
+
+}
 
 
 // USERNAME SEARCH
@@ -253,11 +290,12 @@ card.appendChild(name);
 
 
 // OPEN REEL
-
 card.onclick = () => {
 
-window.location.href =
-"/reels?video=" + file;
+window.open(
+"/uploads/" + file,
+"_blank"
+);
 
 };
 
@@ -266,7 +304,6 @@ results.appendChild(card);
 });
 
 }
-
 
 load();
 

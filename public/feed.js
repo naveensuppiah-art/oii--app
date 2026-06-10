@@ -1,340 +1,32 @@
-import {
-initializeApp
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-push,
-onChildAdded
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-import {
-getStorage,
-ref as storageRef,
-uploadBytes,
-getDownloadURL
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-const firebaseConfig = {
-
-apiKey:
-"AIzaSyBSPst1YvKZHuAH082jOr8iOFHtp5yqXms",
-
-authDomain:
-"oii-f5297.firebaseapp.com",
-
-databaseURL:
-"https://oii-f5297-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-projectId:
-"oii-f5297",
-
-storageBucket:
-"oii-f5297.firebasestorage.app",
-
-messagingSenderId:
-"390917741842",
-
-appId:
-"1:390917741842:web:a557fd4165660b652ce7cb",
-
-measurementId:
-"G-WXYLV585M2"
-
-};
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getDatabase(app);
-
-// ======================
-// FEED
-// ======================
-
-const feed =
-document.getElementById("feed");
-
-
-// ======================
-// LOAD REELS
-// ======================
-
-async function loadReels(){
-
-feed.innerHTML = "";
-
-const res =
-await fetch("/api/reels");
-
-const reels =
-await res.json();
-
-reels.reverse();
-const followingOnly =
-localStorage.getItem(
-"following_only"
-);
-
-if(
-followingOnly
-&&
-!localStorage.getItem(
-"follow_" + index
-)
-){
-
-return;
-
-}
-reels.forEach((file,index)=>{
-
-
-// ======================
-// REEL
-// ======================
-
-const reel =
-document.createElement("div");
-
-reel.className =
-"reel";
-
-reel.style.position =
-"relative";
-
-reel.style.width =
-"100%";
-
-reel.style.height =
-"100vh";
-
-reel.style.overflow =
-"hidden";
-
-reel.style.background =
-"black";
-
-
-// ======================
-// VIDEO
-// ======================
-
-const video =
-document.createElement("video");
-// LOADING TEXT
-
-const loading =
-document.createElement("div");
-
-loading.innerHTML =
-"Loading...";
-
-loading.style.position =
-"absolute";
-
-loading.style.top =
-"50%";
-
-loading.style.left =
-"50%";
-
-loading.style.transform =
-"translate(-50%,-50%)";
-
-loading.style.color =
-"white";
-
-loading.style.fontSize =
-"18px";
-
-loading.style.zIndex =
-"999";
-
-reel.appendChild(loading);
-
-
-// HIDE AFTER LOAD
-
-video.onloadeddata = () => {
-
-loading.style.display =
-"none";
-
-};
-
-video.src =
-"/uploads/" + file;
-
-video.autoplay =
-false;
-
-video.loop =
-true;
-
-video.muted =
-false;
-
-video.playsInline =
-true;
-
-video.controls =
-false;
-
-video.style.width =
-"100%";
-
-video.style.height =
-"100%";
-
-video.style.objectFit =
-"cover";
-
-reel.appendChild(video);
-// TAP TO PAUSE / PLAY
-
-video.onclick = () => {
-
-if(video.paused){
-
-video.play();
-
-}else{
-
-video.pause();
-
-}
-
-};
-// TAP TO PAUSE + HIDE UI
-
-video.onclick = () => {
-
-if(video.paused){
-
-video.play();
-
-}else{
-
-video.pause();
-
-}
-
-if(
-actions.style.opacity ===
-"0"
-){
-
-actions.style.opacity =
-"1";
-
-topBar.style.opacity =
-"1";
-
-}else{
-
-actions.style.opacity =
-"0";
-
-topBar.style.opacity =
-"0";
-
-}
-
-};
-
-
-// PLAY ONLY VISIBLE VIDEO
-
-const observer =
-new IntersectionObserver(
-(entries)=>{
-
-entries.forEach((entry)=>{
-
-if(entry.isIntersecting){
-
-video.play();
-
-}else{
-
-video.pause();
-
-}
-
-});
-
-},
-{
-threshold:0.7
-}
-);
-
-observer.observe(reel);
-
-
-// ======================
-// TOP BAR
-// ======================
-
-const topBar =
-document.createElement("div");
-
-topBar.style.position =
-"absolute";
-
-topBar.style.top =
-"15px";
-
-topBar.style.left =
-"15px";
-
-topBar.style.right =
-"15px";
-
-topBar.style.display =
-"flex";
-
-topBar.style.alignItems =
-"center";
-
-topBar.style.justifyContent =
-"space-between";
-
-topBar.style.zIndex =
-"10";
-
-
-// ======================
-// PROFILE
-// ======================
-
-const profile =
-document.createElement("div");
-
-profile.style.display =
-"flex";
-
-profile.style.alignItems =
-"center";
-
-profile.style.gap =
-"10px";
-
-
-// ======================
-// DP
-// ======================
-
+ const feed = document.getElementById("feed");
 const dp =
-document.createElement("div");
-dp.style.cursor =
-"pointer";
+document.getElementById("dp");
+const usernameText =
+document.getElementById(
+"usernameText"
+);
 
+if(usernameText){
+
+usernameText.innerHTML =
+localStorage.getItem(
+"username"
+) || "User";
+
+}
+const popupName =
+document.getElementById(
+"popupName"
+);
+
+{
+
+popupName.innerHTML =
+localStorage.getItem(
+"username"
+) || "User";
+
+}
 dp.onclick = () => {
 
 window.location.href =
@@ -342,882 +34,370 @@ window.location.href =
 
 };
 
-dp.style.width =
-"42px";
-
-dp.style.height =
-"42px";
-
-dp.style.borderRadius =
-"50%";
-
-dp.style.background =
-"rgba(255,255,255,0.2)";
-
-dp.style.backdropFilter =
-"blur(10px)";
-
-dp.style.display =
-"flex";
-
-dp.style.alignItems =
-"center";
-
-dp.style.justifyContent =
-"center";
-
-dp.style.overflow =
-"hidden";
-
-dp.style.border =
-"2px solid hotpink";
-
-
- //LOAD SAVED DP
-
 const savedDp =
 localStorage.getItem("dp");
 
 if(savedDp){
 
-const img =
-document.createElement("img");
-
-img.src =
-savedDp;
-
-img.style.width =
-"100%";
-
-img.style.height =
-"100%";
-
-img.style.objectFit =
-"cover";
-img.style.pointerEvents =
-"none";
-dp.appendChild(img);
-
-}else{
-
-dp.innerHTML =
-"👤";
-
-dp.style.color =
-"white";
-
-dp.style.fontSize =
-"20px";
+dp.innerHTML = `
+<img
+src="${savedDp}"
+style="
+width:100%;
+height:100%;
+border-radius:50%;
+object-fit:cover;
+">
+`;
 
 }
 
+async function loadReels() {
 
-// CHANGE DP
+    feed.innerHTML = "";
 
-dp.onclick = ()=>{
+    const res = await fetch("/api/reels");
+    const reels = await res.json();
 
-window.location.href =
-"/profile.html";
+    reels.reverse();
 
-const picker =
-document.createElement("input");
+    reels.forEach((reelData, index) => {
 
-picker.type =
-"file";
+        const reel = document.createElement("div");
+        reel.className = "reel";
+        reel.style.height = "100vh";
+        reel.style.position = "relative";
+        reel.style.background = "black";
 
-picker.accept =
-"image/*";
+        const video = document.createElement("video");
+        video.src = reelData.video_url;
+        reel.style.height = "100vh";
+video.style.width = "100vw";
+video.style.height = "100vh";
+video.style.objectFit = "contain";
+        video.loop = true;
+        video.playsInline = true;
 
-picker.click();
+        reel.appendChild(video);
 
-picker.onchange = () => {
+        const observer = new IntersectionObserver((entries) => {
 
-const file =
-picker.files[0];
+            entries.forEach(entry => {
 
-const refPath =
-storageRef(
-storage,
-"dp/" + Date.now()
-);
+                if (entry.isIntersecting) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
 
-uploadBytes(
-refPath,
-file
-)
+            });
 
-.then(()=>{
+        }, {
+            threshold: 0.7
+        });
 
-return getDownloadURL(
-refPath
-);
+        observer.observe(reel);
 
-})
+        const actions = document.createElement("div");
+        actions.style.position = "absolute";
+        actions.style.right = "15px";
+        actions.style.bottom = "120px";
+        actions.style.display = "flex";
+        actions.style.flexDirection = "column";
+        actions.style.gap = "15px";
 
-.then((url)=>{
+        function makeBtn(icon) {
 
-localStorage.setItem(
-"dp",
-url
-);
+            const btn = document.createElement("button");
 
-location.reload();
+            btn.innerHTML = icon;
+            btn.style.width = "55px";
+            btn.style.height = "55px";
+            btn.style.borderRadius = "50%";
+            btn.style.fontSize = "22px";
+            btn.style.background ="rgba(0,0,0,.45)";
+            btn.style.backdropFilter ="blur(10px)";
+            btn.style.border ="1px solid rgba(255,255,255,.15)";
+            btn.style.color ="white";
+            btn.style.boxShadow ="0 4px 20px rgba(0,0,0,.3)";
 
-});
+            return btn;
+        }
 
-};
-};
-// ======================
-// USERNAME
-// ======================
-
-const username =
+       const likeWrap =
 document.createElement("div");
-
-username.innerHTML =
-localStorage.getItem(
-"username"
-) || "Oii User";
-
-username.style.color =
-"white";
-
-username.style.fontWeight =
-"bold";
-
-username.style.fontSize =
-"16px";
-
-username.style.textShadow =
-"0 0 10px black";
-// CHANGE USERNAME
-
-username.onclick = () => {
-
-const newName =
-prompt(
-"Enter Username"
-);
-
-if(newName){
-
-localStorage.setItem(
-"username",
-newName
-);
-
-username.innerHTML =
-newName;
-
-}
-
-};
-
-// APPEND PROFILE
-
-profile.appendChild(dp);
-
-profile.appendChild(username);
-
-
-// ======================
-// FOLLOW BUTTON
-// ======================
-
-const followBtn =
-document.createElement("button");
-
-followBtn.innerHTML =
-"Follow";
-
-followBtn.style.border =
-"none";
-
-followBtn.style.padding =
-"5px 10px";
-
-followBtn.style.borderRadius =
-"20px";
-
-followBtn.style.fontWeight =
-"bold";
-
-followBtn.style.fontSize =
-"13px";
-
-followBtn.style.minWidth =
-"70px";
-
-followBtn.style.cursor =
-"pointer";
-
-followBtn.style.background =
-"white";
-
-let followed =
-localStorage.getItem(
-"follow_" + index
-);
-
-if(followed){
-
-followBtn.innerHTML =
-"Following";
-
-followBtn.style.background =
-"hotpink";
-
-followBtn.style.color =
-"white";
-
-}
-
-followBtn.onclick = () => {
-
-if(followed){
-
-localStorage.removeItem(
-"follow_" + index
-);
-
-followed = false;
-
-followBtn.innerHTML =
-"Follow";
-
-followBtn.style.background =
-"white";
-
-followBtn.style.color =
-"black";
-
-}else{
-
-localStorage.setItem(
-"follow_" + index,
-true
-);
-
-followed = true;
-
-followBtn.innerHTML =
-"Following";
-
-followBtn.style.background =
-"hotpink";
-
-followBtn.style.color =
-"white";
-
-}
-
-};
-
-
-// APPEND TOPBAR
-
-topBar.appendChild(profile);
-
-topBar.appendChild(followBtn);
-
-reel.appendChild(topBar);
-
-
-// ======================
-// RIGHT ACTIONS
-// ======================
-
-const actions =
-document.createElement("div");
-
-actions.style.position =
-"absolute";
-
-actions.style.right =
-"12px";
-
-actions.style.bottom =
-"120px";
-
-actions.style.display =
-"flex";
-
-actions.style.flexDirection =
-"column";
-
-actions.style.alignItems =
-"center";
-
-actions.style.gap =
-"18px";
-
-actions.style.zIndex =
-"10";
-// ======================
-// SAVE REEL
-// ======================
-
-const saveWrap =
-document.createElement("div");
-
-saveWrap.style.textAlign =
-"center";
-
-const saveBtn =
-document.createElement("button");
-
-styleBtn(saveBtn);
-
-
-// CHECK SAVED
-
-let saved =
-localStorage.getItem(
-"saved_" + index
-);
-
-if(saved){
-
-saveBtn.innerHTML =
-"📌";
-
-}else{
-
-saveBtn.innerHTML =
-"🔖";
-
-}
-
-
-// TOGGLE SAVE
-
-saveBtn.onclick = () => {
-
-if(saved){
-
-localStorage.removeItem(
-"saved_" + index
-);
-
-saved = false;
-
-saveBtn.innerHTML =
-"🔖";
-
-}else{
-
-localStorage.setItem(
-"saved_" + index,
-true
-);
-
-saved = true;
-
-saveBtn.innerHTML =
-"📌";
-
-}
-
-};
-
-saveWrap.appendChild(
-saveBtn
-);
-
-actions.appendChild(
-saveWrap
-);
-
-// BUTTON STYLE
-
-function styleBtn(btn){
-
-btn.style.width =
-"50px";
-
-btn.style.height =
-"50px";
-
-btn.style.border =
-"none";
-
-btn.style.borderRadius =
-"50%";
-
-btn.style.background =
-"rgba(0,0,0,0.35)";
-
-btn.style.backdropFilter =
-"blur(10px)";
-
-btn.style.color =
-"white";
-
-btn.style.fontSize =
-"22px";
-
-btn.style.cursor =
-"pointer";
-
-}
-
-
-// ======================
-// LIKE
-// ======================
-
-const likeWrap =
-document.createElement("div");
-
-likeWrap.style.textAlign =
-"center";
 
 const likeBtn =
-document.createElement("button");
-
-styleBtn(likeBtn);
-
-likeBtn.innerHTML =
-"❤️";
-
-let likes =
-localStorage.getItem(
-"likes_" + index
-) || 0;
+makeBtn("❤️");
 
 const likeCount =
 document.createElement("div");
 
-likeCount.innerHTML =
-likes;
-
 likeCount.style.color =
 "white";
 
-likeCount.style.fontSize =
-"14px";
-
-likeCount.style.marginTop =
-"5px";
-
-likeBtn.onclick = () => {
-
-likes++;
-
-localStorage.setItem(
-"likes_" + index,
-likes
-);
-
-likeCount.innerHTML =
-likes;
-
-// HEART POPUP
-
-const heart =
-document.createElement("div");
-
-heart.innerHTML =
-"❤️";
-
-heart.style.position =
-"absolute";
-
-heart.style.top =
-"50%";
-
-heart.style.left =
-"50%";
-
-heart.style.transform =
-"translate(-50%,-50%)";
-
-heart.style.fontSize =
-"90px";
-
-heart.style.zIndex =
-"99999";
-
-heart.style.animation =
-"heartPop 0.8s ease";
-
-reel.appendChild(heart);
-
-setTimeout(()=>{
-
-heart.remove();
-
-},800);
-};
-
-likeWrap.appendChild(likeBtn);
-
-likeWrap.appendChild(likeCount);
-
-actions.appendChild(likeWrap);
-// ======================
-// VIEW COUNT
-// ======================
-
-const viewWrap =
-document.createElement("div");
-
-viewWrap.style.textAlign =
+likeCount.style.textAlign =
 "center";
+console.log("Loading likes", index);
+fetch("/api/likes/" + index)
+.then(r => 
+    r.json())
+.then(data => {
 
-let views =
-localStorage.getItem(
-"views_" + index
-) || 0;
-
-views++;
-
-localStorage.setItem(
-"views_" + index,
-views
-);
-
-const viewText =
-document.createElement("div");
-
-viewText.innerHTML =
-"👀 " + views;
-
-viewText.style.color =
-"white";
-
-viewText.style.fontSize =
-"14px";
-
-viewWrap.appendChild(
-viewText
-);
-
-actions.appendChild(
-viewWrap
-);
-
-
-// ======================
-// COMMENT
-// ======================
-
-const commentWrap =
-document.createElement("div");
-
-commentWrap.style.textAlign =
-"center";
-
-const commentBtn =
-document.createElement("button");
-
-styleBtn(commentBtn);
-
-commentBtn.innerHTML =
-"💬";
-
-let comments =
-JSON.parse(
-localStorage.getItem(
-"comments_" + index
-)
-) || [];
-
-const commentCount =
-document.createElement("div");
-
-commentCount.innerHTML =
-comments.length;
-
-commentCount.style.color =
-"white";
-
-commentCount.style.fontSize =
-"14px";
-
-commentCount.style.marginTop =
-"5px";
-
-// REALTIME COMMENT
-
-commentBtn.onclick = () => {
-
-const text =
-prompt("Add Comment");
-
-if(!text) return;
-
-push(
-
-ref(
-db,
-"comments/" + index
-),
-
-{
-
-user:
-localStorage.getItem(
-"username"
-) || "User",
-
-text:text
-
-}
-
-);
-
-};
-// LIVE COMMENTS
-
-onChildAdded(
-
-ref(
-db,
-"comments/" + index
-),
-
-(snapshot)=>{
-
-comments.push(
-snapshot.val()
-);
-
-commentCount.innerHTML =
-comments.length;
-
-}
-);
-
-commentWrap.appendChild(commentBtn);
-
-commentWrap.appendChild(commentCount);
-
-actions.appendChild(commentWrap);
-
-
-// ======================
-// SHARE
-// ======================
-
-const shareWrap =
-document.createElement("div");
-
-shareWrap.style.textAlign =
-"center";
-
-const shareBtn =
-document.createElement("button");
-
-styleBtn(shareBtn);
-
-shareBtn.innerHTML =
-"🔗";
-
-shareBtn.onclick =
-async ()=>{
-
-if(navigator.share){
-
-await navigator.share({
-
-title:"Oii",
-
-url:window.location.href
+    likeCount.innerHTML =
+    data.count;
 
 });
 
-}else{
+likeBtn.onclick = async () => {
 
-navigator.clipboard.writeText(
-window.location.href
-);
+    const res =
+    await fetch("/api/like",{
+        method:"POST",
+        headers:{
+            "Content-Type":
+            "application/json"
+        },
+        body:JSON.stringify({
+            reel_id:index,
+            username:
+            localStorage.getItem(
+                "username"
+            ) || "User"
+        })
+    });
 
-alert("Link copied");
+    const data =
+    await res.json();
 
-}
+    const countRes =
+    await fetch(
+        "/api/likes/" + index
+    );
+
+    const countData =
+    await countRes.json();
+
+    likeCount.innerHTML =
+    countData.count;
 
 };
 
-shareWrap.appendChild(shareBtn);
+likeWrap.appendChild(
+    likeBtn
+);
 
-actions.appendChild(shareWrap);
+likeWrap.appendChild(
+    likeCount
+);
+        const commentBtn = makeBtn("💬");
+        const shareBtn = makeBtn("🔗");
 
+        const commentPanel = document.createElement("div");
 
-// APPEND ACTIONS
+        commentPanel.style.position = "fixed";
+        commentPanel.style.bottom = "0";
+        commentPanel.style.left = "0";
+        commentPanel.style.width = "100%";
+        commentPanel.style.height = "60%";
+        commentPanel.style.background = "white";
+        commentPanel.style.zIndex = "9999";
+        commentPanel.style.display = "none";
+        commentPanel.style.overflowY = "auto";
+        commentPanel.style.padding = "15px";
 
-reel.appendChild(actions);
+        document.body.appendChild(commentPanel);
 
+        commentBtn.onclick = async () => {
 
-// ======================
-// CAPTION
-// ======================
+            const commentsRes =
+            await fetch("/api/comments/" + index);
 
-const caption =
-document.createElement("div");
+            const comments =
+            await commentsRes.json();
 
-caption.innerHTML = "";
+            commentPanel.innerHTML = `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:15px;
+            ">
+                <h3>Comments</h3>
 
-// TIME
+                <div>
+                    <button id="addComment">
+                        ➕
+                    </button>
 
-const time =
-document.createElement("div");
+                    <button id="closeComments">
+                        ❌
+                    </button>
+                </div>
+            </div>
+            `;
 
-time.innerHTML =
-"Just now";
+            document.getElementById(
+                "closeComments"
+            ).onclick = () => {
 
-time.style.color =
-"#ccc";
+                commentPanel.style.display =
+                "none";
 
-time.style.fontSize =
-"12px";
+            };
 
-time.style.marginTop =
-"5px";
+            document.getElementById(
+                "addComment"
+            ).onclick = async () => {
 
-caption.appendChild(time);
+                const text =
+                prompt("Enter Comment");
 
-caption.style.position =
-"absolute";
+                if(!text) return;
 
-caption.style.left =
-"20px";
+                await fetch(
+                    "/api/comments",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                            "application/json"
+                        },
+                        body:JSON.stringify({
+                            reel_id:index,
+                            username:
+                            localStorage.getItem(
+                                "username"
+                            ) || "User",
+                            comment:text,
+                            parent_id:null
+                        })
+                    }
+                );
 
-caption.style.bottom =
-"120px";
+                commentBtn.click();
 
-caption.style.color =
-"white";
+            };
+            const normalComments =comments.filter(c => !c.parent_id);
 
-caption.style.fontWeight =
-"bold";
+            const replyComments =comments.filter(c => c.parent_id);
+            normalComments.forEach(c => {
 
-caption.style.fontSize =
-"15px";
+                const div =
+                document.createElement("div");
 
-caption.style.textShadow =
-"0 0 10px black";
+                div.style.padding =
+                "10px";
 
-reel.appendChild(caption);
+                div.style.borderBottom =
+                "1px solid #ddd";
 
+                if(c.parent_id){
 
-// ======================
-// ADD REEL
-// ======================
+                    div.style.marginLeft =
+                    "40px";
 
-feed.appendChild(reel);
+                    div.style.background =
+                    "#f5f5f5";
+
+                    div.style.borderRadius =
+                    "10px";
+
+                }
+
+                div.innerHTML = `
+                <b>${c.username}</b>
+                <br>
+                ${c.comment}
+                <br><br>
+
+                <button class="replyBtn">
+                    ↩ Reply
+                </button>
+                `;
+
+                const replyBtn =
+                div.querySelector(
+                    ".replyBtn"
+                );
+
+                replyBtn.onclick =
+                async () => {
+
+                    const reply =
+                    prompt(
+                        "Enter Reply"
+                    );
+
+                    if(!reply) return;
+
+                    await fetch(
+                        "/api/comments",
+                        {
+                            method:"POST",
+                            headers:{
+                                "Content-Type":
+                                "application/json"
+                            },
+                            body:JSON.stringify({
+                                reel_id:index,
+                                username:
+                                localStorage.getItem(
+                                    "username"
+                                ) || "User",
+                                comment:reply,
+                                parent_id:c.id
+                            })
+                        }
+                    );
+
+                    commentBtn.click();
+
+                };
+
+                commentPanel.appendChild(div);
+                replyComments
+.filter(r => r.parent_id === c.id)
+.forEach(r => {
+
+    const replyDiv =
+    document.createElement("div");
+
+    replyDiv.style.marginLeft = "40px";
+    replyDiv.style.background = "#f5f5f5";
+    replyDiv.style.padding = "10px";
+    replyDiv.style.borderRadius = "10px";
+
+    replyDiv.innerHTML =
+    "<b>" + r.username + "</b><br>" +
+    r.comment;
+    console.log("REPLY FOUND", r);
+    commentPanel.appendChild(replyDiv);
+
 });
-}
 
-// ======================
-// LOAD
-// ======================
+            });
 
-loadReels();
+            commentPanel.style.display =
+            "block";
 
+        };
 
-// ======================
-// CHAT BUTTON
-// ======================
+        shareBtn.onclick = () => {
 
-const chatBtn =
-document.createElement("button");
+            navigator.clipboard.writeText(
+                location.href
+            );
 
-chatBtn.innerHTML =
-"💬";
+            alert("Link Copied");
 
-chatBtn.style.position =
-"fixed";
-
-chatBtn.style.left =
-"20px";
-
-chatBtn.style.bottom =
-"150px";
-
-chatBtn.style.width =
-"55px";
-
-chatBtn.style.height =
-"55px";
-
-chatBtn.style.border =
-"none";
-
-chatBtn.style.borderRadius =
-"50%";
-
-chatBtn.style.background =
-"hotpink";
-
-chatBtn.style.color =
-"white";
-
-chatBtn.style.fontSize =
-"22px";
-
-chatBtn.style.zIndex =
-"99999";
-
-chatBtn.style.cursor =
-"pointer";
-
-document.body.appendChild(
-chatBtn
+        };
+        const searchBtn =
+document.getElementById(
+"searchBtn"
 );
 
-chatBtn.onclick = () => {
-
-window.location.href =
-"/chat.html";
-
-};
-// SEARCH BUTTON
-
-const searchBtn =
-document.createElement("button");
-
-searchBtn.innerHTML =
-"🔍";
-
-searchBtn.style.position =
-"fixed";
-
-searchBtn.style.top =
-"80px";
-
-searchBtn.style.right =
-"20px";
-
-searchBtn.style.width =
-"50px";
-
-searchBtn.style.height =
-"50px";
-
-searchBtn.style.border =
-"none";
-
-searchBtn.style.borderRadius =
-"50%";
-
-searchBtn.style.background =
-"hotpink";
-
-searchBtn.style.color =
-"white";
-
-searchBtn.style.fontSize =
-"20px";
-
-searchBtn.style.zIndex =
-"99999";
-
-document.body.appendChild(
-searchBtn
-);
-
-// OPEN SEARCH PAGE
+if(searchBtn){
 
 searchBtn.onclick = () => {
 
@@ -1225,85 +405,111 @@ window.location.href =
 "/search.html";
 
 };
-// ======================
-// NOTIFICATIONS
-// ======================
 
-function showNotification(text){
+}
+        actions.appendChild(likeWrap);
+        actions.appendChild(commentBtn);
+        actions.appendChild(shareBtn);
 
-const note =
-document.createElement("div");
+        reel.appendChild(actions);
 
-note.innerHTML =
-text;
+        feed.appendChild(reel);
 
-note.style.position =
-"fixed";
+    });
 
-note.style.top =
-"20px";
-
-note.style.right =
-"20px";
-
-note.style.background =
-"rgba(0,0,0,0.8)";
-
-note.style.color =
-"white";
-
-note.style.padding =
-"15px 20px";
-
-note.style.borderRadius =
-"15px";
-
-note.style.zIndex =
-"999999";
-
-note.style.fontWeight =
-"bold";
-
-note.style.boxShadow =
-"0 0 15px hotpink";
-
-document.body.appendChild(
-note
+}
+const videoUpload =
+document.getElementById(
+"videoUpload"
 );
 
-setTimeout(()=>{
+videoUpload.onchange =
+async (e) => {
 
-note.remove();
+const file =
+e.target.files[0];
 
-},3000);
+if(!file) return;
+
+const formData =
+new FormData();
+
+formData.append(
+"file",
+file
+);
+formData.append(
+  "username",
+  localStorage.getItem(
+    "username"
+  )
+);
+try{
+
+const res =
+await fetch(
+"/upload",
+{
+method:"POST",
+body:formData
+}
+);
+
+const data =
+await res.json();
+
+alert(
+"Upload Success"
+);
+
+loadReels();
+
+}catch(err){
+
+alert(
+"Upload Failed"
+);
+
 
 }
 
-
-// DEMO NOTIFICATIONS
-
-setTimeout(()=>{
-
-showNotification(
-"❤️ Someone liked your reel"
+};
+const followBtn =
+document.getElementById(
+  "followBtn"
 );
 
-},4000);
+if(followBtn){
 
+followBtn.onclick =
+async () => {
 
-setTimeout(()=>{
+  const follower =
+  localStorage.getItem(
+    "username"
+  );
 
-showNotification(
-"💬 New comment received"
-);
+  const following =
+  name.innerHTML;
 
-},8000);
+  await fetch(
+    "/api/follow",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
+      body:JSON.stringify({
+        follower,
+        following
+      })
+    }
+  );
 
+  loadFollowers();
 
-setTimeout(()=>{
+};
 
-showNotification(
-"👤 New follower"
-);
-
-},12000);
+}
+loadReels ();

@@ -135,6 +135,9 @@ border-radius:10px;
 <body>
 
 <div id="top">
+<button id="editName">
+✏️ Edit Name
+</button>
 
 <img id="dp">
 <button id="editDp">
@@ -155,6 +158,10 @@ Oii User
 Memories Always Welcome ❤️
 </div>
 
+<button id="followBtn">
+Follow
+</button>
+
 <div id="stats">
 
 <div class="stat">
@@ -173,9 +180,7 @@ Reels
 
 <div class="stat">
 
-<div class="num">
-120
-</div>
+<div class="num"id="Followerscount">0</div>
 
 <div class="label">
 Followers
@@ -186,9 +191,8 @@ Followers
 
 <div class="stat">
 
-<div class="num">
-87
-</div>
+<div class="num"id="Followeringcount">
+    0</div>
 
 <div class="label">
 Following
@@ -314,7 +318,7 @@ await res.json();
 reelsCount.innerHTML =
 reels.length;
 
-reels.forEach(file=>{
+reels.forEach(reelData=>{
 
 const video =
 document.createElement(
@@ -322,10 +326,7 @@ document.createElement(
 );
 
 video.src =
-
-"/uploads/" +
-
-(file.video || file);
+reelData.video_url;
 
 video.controls =
 true;
@@ -337,9 +338,46 @@ video
 });
 
 }
+const editName =
+document.getElementById(
+"editName"
+);
+
+editName.onclick = () => {
+
+const newName =
+prompt("Enter Username");
+
+if(!newName) return;
+
+localStorage.setItem(
+"username",
+newName
+);
+
+name.innerHTML =
+newName;
+
+};
 
 loadReels();
+async function loadFollowers() {
 
+  const username = name.innerHTML;
+
+  const res = await fetch(
+    "/api/followers/" + username
+  );
+
+  const data = await res.json();
+
+  document.getElementById(
+    "Followerscount"
+  ).innerHTML = data.count;
+
+}
+
+loadFollowers();
 </script>
 
 </body>
