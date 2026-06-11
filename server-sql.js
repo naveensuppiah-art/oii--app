@@ -29,6 +29,12 @@ pool.query("SELECT NOW()", (err) => {
 // =====================
 // SIGNUP
 // =====================
+app.get("/tables", async (req, res) => {
+  const result = await pool.query(
+    "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+  );
+  res.json(result.rows);
+});
 app.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -38,7 +44,7 @@ app.post("/signup", async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    console.log(err);
+    console.log("SIGNUP ERROR");
     res.json({ success: false });
   }
 });
@@ -319,7 +325,12 @@ app.delete("/api/reels/:id", async(req, res) => {
   });
 
 });
-
+app.get("/dbcheck", async (req, res) => {
+  const result = await pool.query(
+    "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+  );
+  res.json(result.rows);
+});
 // =====================
 // SERVER RUN
 // =====================
